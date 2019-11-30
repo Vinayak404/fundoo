@@ -1,4 +1,6 @@
 const userServices = require('../services/userServices');
+const tokenGenerator = require('../middleware/token');
+const nodeMailer = require('../middleware/nodeMailer')
 exports.register = (req, res) => {
     console.log("erq", req.body);
 
@@ -59,5 +61,37 @@ exports.login = (req, res) => {
     } catch (e) {
         console.log(e);
 
+    }
+}
+exports.forgotPassword = (req, res) => {
+    try {
+        req.checkbody('email', 'Invalid email!').notEmpty().isEmail();
+        let error = req.validationErrors();
+        let response = {}
+        if (error) {
+            response.success = false;
+            response.error = error;
+            res.status(404).send(response)
+        } else {
+            userServices.forgotPassword(req, (err, data) => {
+                if (err) {
+                    response.success = false;
+                    response.error = err;
+                    res.status(404).send(response)
+                } else {
+                    let payLoad = data._id;
+                    console.log(payLoad);
+                    let obj = tokenGenerator.tokenGenerator(payLoad)
+                    let url = `${process.env.URL}${obj.token}`
+                    console.log(url);
+                    nodeMailer.sendMail(url, req.body.email)
+                    response.success = true;
+                    response.data = data;
+                    res.status(200).send(data);
+                }
+            })
+        }
+    } catch (e) {
+        console.log(e);
     }
 }

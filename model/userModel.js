@@ -70,3 +70,16 @@ exports.login = (req, callback) => {
     })
 
 }
+exports.forgotPassword = (req, callback) => {
+    user.findOne({
+        email: req.body.email
+    }, (err, data) => {
+        if (data) {
+            callback(data)
+            console.log(data);
+        } else {
+            callback(err)
+            console.log("user not found!");
+        }
+    })
+}
