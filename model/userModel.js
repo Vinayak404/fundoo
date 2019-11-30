@@ -90,7 +90,7 @@ exports.resetPassword = (req, callback) => {
             console.log("error in salting!!");
         } else {
             user.updateOne({
-                _id: req.decoded.payLoad
+                _id: req.decoded.payload
             }, {
                 password: encrypted
             }, (err, data) => {
@@ -98,7 +98,7 @@ exports.resetPassword = (req, callback) => {
                     callback(err)
                     console.log("error in updating password!!");
                 } else {
-                    callback(data)
+                    callback(null, data)
                     console.log('updated password successfully!!', data);
 
                 }
