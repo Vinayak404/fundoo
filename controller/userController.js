@@ -22,11 +22,11 @@ exports.register = (req, res) => {
                 if (err) {
                     response.success = false;
                     response.data = err
-                    res.status(404).send(err);
+                    res.status(404).send(response);
                 } else {
                     response.success = true;
                     response.data = data
-                    res.status(200).send(data);
+                    res.status(200).send(response);
                 }
             })
         }
@@ -50,11 +50,11 @@ exports.login = (req, res) => {
                 if (err) {
                     response.success = false;
                     response.data = err
-                    res.status(404).send(err);
+                    res.status(404).send(response);
                 } else {
                     response.success = true;
                     response.data = data
-                    res.status(200).send(data);
+                    res.status(200).send(response);
                 }
             })
         }
@@ -79,9 +79,9 @@ exports.forgotPassword = (req, res) => {
                     response.error = err;
                     res.status(404).send(response)
                 } else {
-                    let payLoad = data._id;
-                    console.log(payLoad);
-                    let obj = tokenGenerator.tokenGenerator(payLoad)
+                    let payload = data._id;
+                    console.log(payload);
+                    let obj = tokenGenerator.tokenGenerator(payload)
                     let url = `${process.env.URL+obj.token}`
                     console.log(url);
                     nodeMailer.sendMail(url, req.body.email)
@@ -102,22 +102,22 @@ exports.resetPassword = (req, res) => {
         let error = req.validationErrors();
         let response = {}
         if (error) {
-            response.success = false
+            response.success1 = false
             response.error = error
             res.status(400).send(response)
         } else {
             if (req.body.password != req.body.confirmPassword) {
-                response.success = false
+                response.success2 = false
                 response.error = "passwords don't match"
                 res.status(400).send(response)
             } else {
                 userServices.resetPassword(req, (err, data) => {
                     if (err) {
-                        response.success = false
+                        response.success3 = false
                         response.error = err
                         res.status(404).send(response)
                     } else {
-                        response.success = true
+                        response.success4 = true
                         response.data = data
                         res.status(200).send(response)
                     }
