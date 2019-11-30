@@ -29,7 +29,7 @@ exports.forgotPassword = (req, callback) => {
         console.log(e);
     }
 }
-exports.resetPassword = (err, callback) => {
+exports.resetPassword = (req, callback) => {
     try {
         model.resetPassword(req, (err, data) => {
             if (err) callback(err)
