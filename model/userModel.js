@@ -75,11 +75,34 @@ exports.forgotPassword = (req, callback) => {
         email: req.body.email
     }, (err, data) => {
         if (data) {
-            callback(data)
+            callback(null, data)
             console.log(data);
         } else {
             callback(err)
             console.log("user not found!");
+        }
+    })
+}
+exports.resetPassword = (req, callback) => {
+    bcrypt.hash(req.body.password, 10, (err, encrypted) => {
+        if (err) {
+            callback(err)
+            console.log("error in salting!!");
+        } else {
+            user.updateOne({
+                _id: req.decoded.payLoad
+            }, {
+                password: encrypted
+            }, (err, data) => {
+                if (err) {
+                    callback(err)
+                    console.log("error in updating password!!");
+                } else {
+                    callback(data)
+                    console.log('updated password successfully!!', data);
+
+                }
+            })
         }
     })
 }
