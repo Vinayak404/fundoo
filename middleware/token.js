@@ -5,13 +5,13 @@ exports.tokenGenerator = (payload) => {
         },
         process.env.KEY, {
             expiresIn: '24h'
-        })
+        });
     const obj = {
         message: "token Generated successfully!",
         token: token
     }
     return obj;
-}
+};
 exports.verify = (req, res, next) => {
     console.log("Verifying request", process.env.KEY);
     var token = req.params.token;
@@ -24,5 +24,5 @@ exports.verify = (req, res, next) => {
             console.log(result);
             next();
         }
-    })
-}
+    });
+};
