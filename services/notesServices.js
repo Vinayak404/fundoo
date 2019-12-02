@@ -4,7 +4,7 @@ exports.addNote = (req) => {
         let note = new model.notesModel({
             title: req.body.title,
             description: req.body.description,
-            id: req.body.id
+            _userId: req.decoded.payload.id
         });
         note.save((err, data) => {
             if (err) reject(err)
