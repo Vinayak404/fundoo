@@ -1,0 +1,13 @@
+{
+    "registration": {
+        "firstName": "abhishek",
+        "lastName": "MY",
+        "email": "abhimy@gmail.com",
+        "password": "abcd1234",
+        "confirmPassword": "abcd1234"
+    },
+    "login": {
+        "email": "abhimy@gmail.com",
+        "password": "abcd1234"
+    }
+}
