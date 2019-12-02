@@ -1,5 +1,5 @@
 const userServices = require('../services/userServices');
-const tokenGenerator = require('../middleware/token');
+const token = require('../middleware/token');
 const nodeMailer = require('../middleware/nodeMailer')
 exports.register = (req, res) => {
     console.log("erq", req.body);
@@ -54,7 +54,13 @@ exports.login = (req, res) => {
                     res.status(404).send(response);
                 } else {
                     response.success = true;
-                    response.data = data
+                    let data1 = [];
+                    data1.push(token.tokenGenerator({
+                        "email": req.body.email,
+                        "id": data._id
+                    }))
+                    data1.push(data)
+                    response.data = data1;
                     res.status(200).send(response);
                 }
             })
@@ -82,7 +88,7 @@ exports.forgotPassword = (req, res) => {
                 } else {
                     let payload = data._id;
                     console.log(payload);
-                    let obj = tokenGenerator.tokenGenerator(payload)
+                    let obj = token.tokenGenerator(payload)
                     let url = `${process.env.URL+obj.token}`
                     console.log(url);
                     nodeMailer.sendMail(url, req.body.email)
