@@ -9,8 +9,8 @@ const notes = new Schema({
         type: String,
         required: true
     },
-    id: {
-        type: String,
+    _userId: {
+        type: Schema.Types.ObjectId,
         required: true
     }
 }, {
