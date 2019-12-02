@@ -12,6 +12,7 @@ const bodyParser = require('body-parser')
 require('dotenv').config()
 
 const routes = require('./router/userRouter')
+const notesRoutes = require('./router/notesRouter')
 const expressValidator = require('express-validator')
 const dbconnect = require('./configuration/dbConfig')
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 app.use('/', routes);
+app.use('/', notesRoutes)
 
 //to connect to mongoose database;
 

@@ -11,6 +11,7 @@ exports.register = (req, res) => {
         req.checkBody('lastName', 'invalid lastName').notEmpty().isAlpha();
         req.checkBody('email', 'invalid email').notEmpty().isEmail();
         req.checkBody('password', 'invalid password').len(6, 12);
+        req.checkBody('confirmPassword', 'passwords dont match').len(6, 12).equals(req.body.password);
         let error = req.validationErrors();
         let response = {};
         if (error) {
