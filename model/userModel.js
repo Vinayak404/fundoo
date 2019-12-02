@@ -100,7 +100,6 @@ exports.resetPassword = (req, callback) => {
                 } else {
                     callback(null, data)
                     console.log('updated password successfully!!', data);
-
                 }
             })
         }

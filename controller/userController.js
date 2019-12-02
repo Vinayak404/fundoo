@@ -12,7 +12,7 @@ exports.register = (req, res) => {
         req.checkBody('email', 'invalid email').notEmpty().isEmail();
         req.checkBody('password', 'invalid password').len(6, 12);
         let error = req.validationErrors();
-        let response = {}
+        let response = {};
         if (error) {
             response.success = false;
             response.error = error;
@@ -97,10 +97,10 @@ exports.forgotPassword = (req, res) => {
 }
 exports.resetPassword = (req, res) => {
     try {
-        req.checkBody('password', 'password must be 6-12 chars long!!').notEmpty().len(6, 12);
+        req.checkBody('password', 'password must be 6-12 chars long!!').notEmpty().len(6, 12).equals(req.body.confirmPassword);
         req.checkBody('confirmPassword', 'password must be 6-12 chars long!!').notEmpty().len(6, 12);
         let error = req.validationErrors();
-        let response = {}
+        let response = {};
         if (error) {
             response.success1 = false
             response.error = error
@@ -126,6 +126,5 @@ exports.resetPassword = (req, res) => {
         }
     } catch (e) {
         console.log(e);
-
     }
 }
