@@ -26,3 +26,18 @@ exports.verify = (req, res, next) => {
         }
     });
 };
+exports.userVerify = (req, res, next) => {
+    console.log("Verifying request", process.env.KEY);
+    var token = req.headers.token;
+    jwt.verify(token, process.env.KEY, (err, result) => {
+        if (err) res.status(422).send({
+            message: "incorrect token!!"
+        });
+        else {
+            req.decoded = result;
+            
+            console.log(result);
+            next();
+        }
+    });
+};
