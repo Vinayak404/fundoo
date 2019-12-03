@@ -2,10 +2,8 @@ const userServices = require('../services/userServices');
 const token = require('../middleware/token');
 const nodeMailer = require('../middleware/nodeMailer')
 exports.register = (req, res) => {
-    console.log("erq", req.body);
-
     try {
-        console.log("erq", req.body);
+        console.log("register", req.body);
 
         req.checkBody('firstName', 'invalid firstName').notEmpty().isAlpha();
         req.checkBody('lastName', 'invalid lastName').notEmpty().isAlpha();
