@@ -69,6 +69,7 @@ exports.editTitle = (req, res) => {
             }).catch((err) => {
                 response.success = true;
                 response.err = err
+                res.status(500).send(response)
             })
     } catch (e) {
         console.log(e);

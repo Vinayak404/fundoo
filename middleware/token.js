@@ -35,7 +35,6 @@ exports.userVerify = (req, res, next) => {
         });
         else {
             req.decoded = result;
-            
             console.log(result);
             next();
         }

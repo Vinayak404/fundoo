@@ -2,8 +2,8 @@
  * @Execution : default node : cmd> npm start
  * @Purpose : backend of user login using express node.js for Fundoo app
  * @description :using express framework and connect socket.
- * @overview :API's for backend .
- * @author : Vinayaka.S.V <vinayakavastrad@gmail.com>
+ * @overview :API's for backend.
+ * @author : Vinayaka.S.V <vinayakavastrad@gmail.com> 
  * @version : 1.0
  * @since : 30/11/2019
  *********************************************************************************************************/
@@ -21,8 +21,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }))
-app.use('/', routes);
-app.use('/', notesRoutes)
+app.use('/user', routes);
+app.use('/notes', notesRoutes)
 
 //to connect to mongoose database;
 
@@ -30,3 +30,4 @@ app.listen(process.env.PORT, () => {
     console.log(`server is listening on port ${process.env.PORT}`);
     dbconnect.dbConnection()
 })
+module.exports = app

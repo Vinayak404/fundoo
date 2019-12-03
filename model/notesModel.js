@@ -11,8 +11,14 @@ const notes = new Schema({
     },
     _userId: {
         type: Schema.Types.ObjectId,
+        ref: "user",
         required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
+
 }, {
     timestamps: true
 })
