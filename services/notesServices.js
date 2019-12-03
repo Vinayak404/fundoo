@@ -35,22 +35,12 @@ exports.deleteNote = (req) => {
         })
     })
 }
-exports.editTitle = (req) => {
+exports.editNote = (req) => {
     return new Promise((resolve, reject) => {
         model.notesModel.findByIdAndUpdate({
             _id: req.body._id
         }, {
             title: req.body.title
-        }, (err, data) => {
-            if (err) reject(err)
-            else resolve(data)
-        })
-    })
-}
-exports.editDescription = (req) => {
-    return new Promise((resolve, reject) => {
-        model.notesModel.findByIdAndUpdate({
-            _id: req.body._id
         }, {
             description: req.body.description
         }, (err, data) => {

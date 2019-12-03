@@ -5,6 +5,5 @@ const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
 notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
 notesRouter.put('/deleteNote', notesController.deleteNote);
-notesRouter.put('/editTitle', notesController.editTitle);
-notesRouter.put('/editDescription', notesController.editDescription);controller/notesController.js
+notesRouter.put('/editNote', notesController.editNote);
 module.exports = notesRouter;

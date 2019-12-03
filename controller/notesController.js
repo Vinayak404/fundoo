@@ -58,10 +58,10 @@ exports.deleteNote = (req, res) => {
 
     }
 }
-exports.editTitle = (req, res) => {
+exports.editNote = (req, res) => {
     try {
         let response = {};
-        notesServices.editTitle(req)
+        notesServices.editNote(req)
             .then((data) => {
                 response.success = true;
                 response.data = data;
@@ -73,23 +73,5 @@ exports.editTitle = (req, res) => {
             })
     } catch (e) {
         console.log(e);
-    }
-}
-exports.editDescription = (req, res) => {
-    try {
-        let response = {};
-        notesServices.editDescription(req)
-            .then((data) => {
-                response.success = true;
-                response.data = data;
-                res.status(200).send(response);
-            }).catch((err) => {
-                response.success = false;
-                response.err = err;
-                res.status(500).send(response)
-            })
-    } catch (e) {
-        console.log(e);
-
     }
 }
