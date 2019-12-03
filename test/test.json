@@ -1,13 +1,20 @@
 {
-    "registration": {
+    "register": {
         "firstName": "abhishek",
         "lastName": "MY",
-        "email": "abhimy@gmail.com",
+        "email": "abhimy71@gmail.com",
         "password": "abcd1234",
         "confirmPassword": "abcd1234"
     },
     "login": {
         "email": "abhimy@gmail.com",
-        "password": "abcd1234"
+        "password": "abcd12345"
+    },
+    "forgotPassword": {
+        "email": "abhimy@gmail.com"
+    },
+    "resetPassword": {
+        "password": "abcd12345",
+        "confirmPassword": "abcd12345"
     }
 }
