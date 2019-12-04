@@ -40,12 +40,11 @@ exports.editNote = (req) => {
         model.notesModel.findByIdAndUpdate({
             _id: req.body._id
         }, {
-            title: req.body.title
-        }, {
+            title: req.body.title,
             description: req.body.description
         }, (err, data) => {
             if (err) reject(err)
-            else resolve(data)
+            else resolve(data) 
         })
     })
 }
