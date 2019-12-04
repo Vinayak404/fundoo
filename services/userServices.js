@@ -99,3 +99,26 @@ exports.resetPassword = (req, callback) => {
         console.log(e);
     }
 }
+exports.uploadImage = (req, imageURL, callback) => {
+    console.log('userid as', req.decoded.payload.id);
+    model.register.findOne({
+        "_id": req.decoded.payload.id
+    }, (err, data) => {
+        if (err) {
+            callback(err)
+        } else {
+            model.register.updateOne({
+                "_id": req.decoded.payload.id
+            }, {
+                "imageURL": imageURL
+            }, (err, data) => {
+                if (err) {
+                    callback(err)
+                } else {
+                    callback(null, data)
+                }
+            })
+        }
+    })
+
+}
