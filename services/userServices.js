@@ -1,5 +1,6 @@
 const model = require('../model/userModel')
 const bcrypt = require('bcrypt')
+const emailExistence = require('email-existence')
 
 exports.register = (req, callback) => {
     try {
@@ -13,22 +14,28 @@ exports.register = (req, callback) => {
                     console.log('failed at model backend', err);
 
                 } else {
-                    bcrypt.hash(req.body.password, 10, (err, encrypted) => {
-                        let user1 = new model.user({
-                            firstName: req.body.firstName,
-                            lastName: req.body.lastName,
-                            email: req.body.email,
-                            password: encrypted
-                        })
-                        user1.save((err, data) => {
-                            if (err) {
-                                console.log('failed to save to db', err);
-                                callback(err)
-                            } else {
-                                console.log('saved in the database', data);
-                                callback(null, data);
-                            }
-                        })
+                    emailExistence(req.body.email, (err, data) => {
+                        if (!data) callback('email invalid!')
+                        else {
+
+                            bcrypt.hash(req.body.password, 10, (err, encrypted) => {
+                                let user1 = new model.user({
+                                    firstName: req.body.firstName,
+                                    lastName: req.body.lastName,
+                                    email: req.body.email,
+                                    password: encrypted
+                                })
+                                user1.save((err, data) => {
+                                    if (err) {
+                                        console.log('failed to save to db', err);
+                                        callback(err)
+                                    } else {
+                                        console.log('saved in the database', data);
+                                        callback(null, data);
+                                    }
+                                })
+                            })
+                        }
                     })
                 }
             }

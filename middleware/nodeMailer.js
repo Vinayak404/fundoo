@@ -10,7 +10,7 @@ exports.sendMail = (url, email) => {
     var mailOptions = {
         from: process.env.EMAIL,
         to: email,
-        subject: 'reser Password',
+        subject: 'reset Password',
         description: 'click on the link to reset your Fundoo password',
         text: url
     };

@@ -3,7 +3,7 @@ const verifyToken = require('../middleware/token');
 const express = require('express');
 const router = express.Router();
 const upload = require('../services/fileUploadServices');
-const singleUpload = upload.single('image');
+let singleUpload = upload.single('image');
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/forgotPassword', userController.forgotPassword);
@@ -12,7 +12,7 @@ router.post('/uploadImage', verifyToken.userVerify, (req, res, next) => {
     // console.log('req', req);
     singleUpload(req, res, (err) => {
         console.log("req.file", req.file);
-        const imageURL = req.file.location;
+        let imageURL = req.file.location;
         console.log("image URL", imageURL);
         req.imageURL = imageURL;
         next();

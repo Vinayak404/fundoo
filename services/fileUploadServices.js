@@ -24,7 +24,7 @@ const upload = multer({
             })
         },
         key: (req, file, callback) => {
-            callback(null, Date.now().toString())
+            callback(null, Date.now().toString());
         }
     })
 })
