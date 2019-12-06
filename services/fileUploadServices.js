@@ -1,31 +1,34 @@
 require('dotenv').config();
 const AWS = require('aws-sdk');
 const multer = require('multer');
-const multers3 = require('multer-s3');
+const multerS3 = require('multer-s3');
+
 const accessKeyId = process.env.ACCESSID;
-const secretKey = process.env.SECRETKEY;
-const bucketName = process.env.BUCKETNAME;
+const secretAccessKey = process.SECRETKEY;
+const Bucket = process.env.BUCKETNAME;
+
 AWS.config.update({
     accessKeyId: accessKeyId,
-    secretAccessKey: secretKey,
-    Bucket: bucketName
+    secretAccessKey: secretAccessKey,
+    Bucket: Bucket,
+    // region: 'ap-south-1'
 })
 const s3 = new AWS.S3();
 const upload = multer({
-    storage: multers3({
+    storage: multerS3({
         s3: s3,
-        bucket: bucketName,
-        contentType: multers3.AUTO_CONTENT_TYPE,
+        bucket: Bucket,
+        contentType: multerS3.AUTO_CONTENT_TYPE,
         acl: 'public-read',
-        metadata: (req, file, callback) => {
-            console.log("file in multer", file);
-            callback(null, {
+        metadata: (req, file, cb) => {
+            // console.log("req in multer", file);
+            cb(null, {
                 fieldName: 'Profile'
-            })
+            });
         },
-        key: (req, file, callback) => {
-            callback(null, Date.now().toString());
+        key: (req, file, cb) => {
+            cb(null, Date.now().toString())
         }
     })
 })
-module.exports = upload
+module.exports = upload;

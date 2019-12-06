@@ -1,5 +1,5 @@
 const notesController = require('../controller/notesController');
-const verifyToken = require('../middleware/token');
+const verifyToken = require('../helpers/token');
 const express = require('express');
 const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);

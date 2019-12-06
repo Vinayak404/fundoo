@@ -1,6 +1,6 @@
 const userServices = require('../services/userServices');
-const token = require('../middleware/token');
-const nodeMailer = require('../middleware/nodeMailer')
+const token = require('../helpers/token');
+const nodeMailer = require('../helpers/nodeMailer')
 exports.register = (req, res) => {
     try {
         console.log("register", req.body);
@@ -46,11 +46,7 @@ exports.login = (req, res) => {
             res.status(422).send(response)
         } else {
             userServices.login(req, (err, data) => {
-                if (err) {
-                    response.success = false;
-                    response.data = err
-                    res.status(404).send(response);
-                } else {
+                if (data) {
                     response.success = true;
                     let data1 = [];
                     data1.push(token.tokenGenerator({
@@ -60,6 +56,11 @@ exports.login = (req, res) => {
                     data1.push(data)
                     response.data = data1;
                     res.status(200).send(response);
+
+                } else {
+                    response.success = false;
+                    response.err = err
+                    res.status(404).send(response);
                 }
             })
         }
@@ -87,9 +88,9 @@ exports.forgotPassword = (req, res) => {
                     let payload = data._id;
                     console.log(payload);
                     let obj = token.tokenGenerator(payload)
-                    let url = `${process.env.URL+obj.token}`
-                    console.log(url);
-                    nodeMailer.sendMail(url, req.body.email)
+                    let token1 = obj.token
+                    console.log(token1);
+                    nodeMailer.sendMail(token, req.body.email)
                     response.success = true;
                     response.data = data;
                     res.status(200).send(response);
@@ -101,56 +102,68 @@ exports.forgotPassword = (req, res) => {
     }
 }
 exports.resetPassword = (req, res) => {
-    try {
-        req.checkBody('password', 'password must be 6-12 chars long!!').notEmpty().len(6, 12).equals(req.body.confirmPassword);
-        req.checkBody('confirmPassword', 'password must be 6-12 chars long!!').notEmpty().len(6, 12);
-        let error = req.validationErrors();
-        let response = {};
-        if (error) {
-            response.success1 = false
-            response.error = error
+    req.checkBody('password', 'password must be 6-12 chars long!!').notEmpty().len(6, 12).equals(req.body.confirmPassword);
+    req.checkBody('confirmPassword', 'password must be 6-12 chars long!!').notEmpty().len(6, 12);
+    console.log(req.body);
+
+    let error = req.validationErrors();
+    let response = {};
+    if (error) {
+        response.success1 = false
+        response.error = error
+        res.status(400).send(response)
+    } else {
+        if (req.body.password != req.body.confirmPassword) {
+            response.success2 = false
+            response.error = "passwords don't match"
             res.status(400).send(response)
         } else {
-            if (req.body.password != req.body.confirmPassword) {
-                response.success2 = false
-                response.error = "passwords don't match"
-                res.status(400).send(response)
-            } else {
-                userServices.resetPassword(req, (err, data) => {
-                    if (err) {
-                        response.success3 = false
-                        response.error = err
-                        res.status(404).send(response)
-                    } else {
-                        response.success4 = true
-                        response.data = data
-                        res.status(200).send(response)
-                    }
-                })
-            }
+            userServices.resetPassword(req, (err, data) => {
+                if (err) {
+                    response.success3 = false
+                    response.error = err
+                    res.status(404).send(response)
+                } else {
+                    response.success4 = true
+                    response.data = data
+                    res.status(200).send(response)
+                }
+            })
         }
-    } catch (e) {
-        console.log(e);
     }
 }
-exports.uploadImage = (req, res) => {
-    try {
-        console.log('req.image url', req.imageURL);
-        const imageURL = req.imageURL;
-        var response = {};
-        userServices.uploadImage(req, imageURL, (err, result) => {
-            if (err) {
-                console.log('err');
-                response.err = err;
-                response.success = false;
-                res.status(404).send(response);
-            } else {
-                response.result = result;
-                response.success = true;
-                res.status(200).send(response);
-            }
-        })
-    } catch (e) {
-        console.log(e)
-    };
+
+const upload = require('../helpers/multer');
+const singleUpload = upload.single('image');
+exports.uploadpic = (req, res) => {
+
+    singleUpload(req, res, (err, data) => {
+
+        if (err) {
+            return res.status(422).send({
+                errors: [{
+                    title: 'File Upload Error',
+                    detail: err.message
+                }]
+            });
+        } else {
+            let imageURL = req.file.location
+            console.log(req.file.location);
+            userServices.uploadImage(req, imageURL, (err, result) => {
+                let response = {}
+                if (err) {
+                    console.log('err');
+                    response.err = err;
+                    response.success = false;
+                    res.status(404).send(response);
+                } else {
+                    response.result = result;
+                    response.success = true;
+                    response.imageurl = req.file.location
+                    res.status(200).send(response);
+                }
+            })
+
+        }
+    })
 }
