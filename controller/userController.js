@@ -1,6 +1,8 @@
 const userServices = require('../services/userServices');
 const token = require('../helpers/token');
-const nodeMailer = require('../helpers/nodeMailer')
+const nodeMailer = require('../helpers/nodeMailer');
+const redis = require('redis')
+const redisCache = require('../helpers/redis');
 exports.register = (req, res) => {
     try {
         console.log("register", req.body);
@@ -48,15 +50,21 @@ exports.login = (req, res) => {
             userServices.login(req, (err, data) => {
                 if (data) {
                     response.success = true;
-                    let data1 = [];
-                    data1.push(token.tokenGenerator({
+                    const tok = token.tokenGenerator({
                         "email": req.body.email,
                         "id": data._id
-                    }))
-                    data1.push(data)
-                    response.data = data1;
-                    res.status(200).send(response);
-
+                    })
+                    redisCache.addCache(tok, (err, data2) => {
+                        if (err) {
+                            response.err = err;
+                            response.success = false
+                            res.status(422).send(response)
+                        } else {
+                            response.success = true
+                            response.data = data2;
+                            res.status(200).send(response);
+                        }
+                    })
                 } else {
                     response.success = false;
                     response.err = err

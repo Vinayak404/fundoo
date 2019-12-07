@@ -4,7 +4,7 @@ exports.addNote = (req) => {
         let note = new model.notesModel({
             title: req.body.title,
             description: req.body.description,
-            _userId: req.decoded.payload.id
+            _userId: req.decoded.id
         });
         note.save((err, data) => {
             if (err) reject(err)
@@ -15,7 +15,7 @@ exports.addNote = (req) => {
 exports.getNotes = (req) => {
     return new Promise((resolve, reject) => {
         model.notesModel.find({
-            _userId: req.decoded.payload.id,
+            _userId: req.decoded.id,
             isDeleted: false
         }, (err, data) => {
             if (err) reject(err)
@@ -44,7 +44,7 @@ exports.editNote = (req) => {
             description: req.body.description
         }, (err, data) => {
             if (err) reject(err)
-            else resolve(data) 
+            else resolve(data)
         })
     })
 }

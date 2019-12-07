@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({
 app.use('/user', routes);
 app.use('/notes', notesRoutes)
 
-//to connect to mongoose database;
+//to connect to server and mongoose database;
 
 app.listen(process.env.PORT, () => {
     console.log(`server is listening on port ${process.env.PORT}`);
