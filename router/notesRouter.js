@@ -6,4 +6,5 @@ notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
 notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
 notesRouter.put('/deleteNote', notesController.deleteNote);
 notesRouter.put('/editNote', notesController.editNote);
-module.exports = notesRouter;
+notesRouter.post('/collaborate', verifyToken.userVerify, notesController.collaborate);
+module.exports = notesRouter; 
