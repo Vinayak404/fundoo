@@ -27,18 +27,13 @@ exports.verify = (req, res, next) => {
             next();
         }
     });
-}; 
+};
 exports.userVerify = (req, res, next) => {
-    // console.log("REG from token--------->", req);
-    // console.log("Verifying request", redisCache.getCache());
-
-    //var token = client.get('mytoken').token;
     redisCache.getCache((err, data) => {
-
         if (data) {
-            console.log('token in middleware---->', token);
+            console.log('token in middleware---->', data.token);
 
-            jwt.verify(token.token, process.env.KEY, (err, result) => {
+            jwt.verify(data.token, process.env.KEY, (err, result) => {
                 if (err) res.status(422).send({
                     message: "incorrect token!!"
                 });
