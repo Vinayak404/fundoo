@@ -10,7 +10,7 @@ exports.addCache = (data, callback) => {
     client.set(process.env.CACHEKEY, JSON.stringify(data), (err, data) => {
         if (err) callback(err)
         else callback(null, data)
-    })
+    }) 
 }
 exports.getCache = (callback) => {
     client.get(process.env.CACHEKEY, (err, data) => {
@@ -19,9 +19,7 @@ exports.getCache = (callback) => {
             let token = JSON.parse(data)
             callback(null, token);
         } else callback(err);
-
     })
-
 }
 exports.deCache = () => {
     client.del(process.env.CACHEKEY, (err, data) => {
