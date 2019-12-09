@@ -141,37 +141,24 @@ exports.resetPassword = (req, res) => {
     }
 }
 
-const upload = require('../helpers/multer');
-const singleUpload = upload.single('image');
 exports.uploadpic = (req, res) => {
 
-    singleUpload(req, res, (err, data) => {
-    
-        if (err) {
-            return res.status(422).send({
-                errors: [{
-                    title: 'File Upload Error',
-                    detail: err.message
-                }]
-            });
-        } else {
-            let imageURL = req.file.location
-            console.log(req.file.location);
-            userServices.uploadImage(req, imageURL, (err, result) => {
-                let response = {}
-                if (err) {
-                    console.log('err');
-                    response.err = err;
-                    response.success = false;
-                    res.status(404).send(response);
-                } else {
-                    response.result = result;
-                    response.success = true;
-                    response.imageurl = req.file.location
-                    res.status(200).send(response);
-                }
-            })
+    let imageURL = req.file.location
+    // console.log("new img-->", req.file.location);
 
+    console.log(req.file);
+    userServices.uploadImage(req, imageURL, (err, result) => {
+        let response = {}
+        if (err) {
+            console.log('err');
+            response.err = err;
+            response.success = false;
+            res.status(404).send(response);
+        } else {
+            response.result = result;
+            response.success = true;
+            response.imageurl = req.file.location
+            res.status(200).send(response);
         }
     })
 }
