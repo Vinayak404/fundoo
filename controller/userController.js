@@ -146,7 +146,7 @@ const singleUpload = upload.single('image');
 exports.uploadpic = (req, res) => {
 
     singleUpload(req, res, (err, data) => {
-
+    
         if (err) {
             return res.status(422).send({
                 errors: [{
