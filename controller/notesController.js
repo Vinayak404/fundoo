@@ -77,12 +77,65 @@ exports.editNote = (req, res) => {
         console.log(e);
     }
 }
+exports.archive = (req, res) => {
+    try {
+        let response = {};
+        notesServices.archive(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = true;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+exports.unArchive = (req, res) => {
+    try {
+        let response = {};
+        notesServices.unArchive(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = true;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+    }
+}
+exports.addReminder = (req, res) => {
+    try {
+        let response = {};
+        notesServices.addReminder(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.error = err;
+                res.status(422).send(response);
+            })
+
+    } catch (e) {
+        console.log(e);
+    }
+}
 exports.collaborate = (req, res) => {
     try {
         req.checkBody('noteId', 'invalid model id').notEmpty();
         req.checkBody('collabId', 'invalid collab id').notEmpty();
         let error = req.validationErrors();
-        let response = {}
+        let response = {};
         if (error) {
             response.success = false;
             response.err = error
@@ -96,10 +149,44 @@ exports.collaborate = (req, res) => {
                 }).catch((err) => {
                     response.success = false;
                     response.error = err;
-                    res.status(422).send(response)
+                    res.status(422).send(response);
                 })
         }
-
+    } catch (e) {
+        console.log(e);
+    }
+}
+exports.getCollaborators = (req, res) => {
+    try {
+        let response = {};
+        notesServices.getCollaborators(req)
+            .then((data) => {
+                response.data = data;
+                response.success = true;
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                response.success = false;
+                response.error = err;
+                res.status(404).send(response)
+            })
+    } catch (e) {
+        console.log(e)
+    };
+}
+exports.deleteCollaborator = (req, res) => {
+    try {
+        let response = {};
+        notesServices.deleteCollaborator(req)
+            .then((data) => {
+                response.data = data;
+                response.success = true;
+                res.status(200).send(response)
+            }).catch((err) => {
+                response.err = err;
+                response.success = false
+                res.status(404).send(response)
+            })
     } catch (e) {
         console.log(e);
     }
