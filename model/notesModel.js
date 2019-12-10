@@ -17,6 +17,13 @@ const notes = new Schema({
     isDeleted: {
         type: Boolean,
         default: false
+    },
+    isArchived: {
+        type: Boolean,
+        default: false
+    },
+    reminder: {
+        type: Date,
     }
 
 }, {
