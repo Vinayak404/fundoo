@@ -19,7 +19,8 @@ exports.getNotes = (req) => {
     return new Promise((resolve, reject) => {
         model.notesModel.find({
             _userId: req.decoded.payload.id,
-            isDeleted: false
+            isDeleted: false,
+            isArchived: false
         }, (err, data) => {
             if (err) reject(err)
             else resolve(data)
@@ -51,9 +52,47 @@ exports.editNote = (req) => {
         })
     })
 }
+exports.archive = async (req) => {
+    return await new Promise((resolve, reject) => {
+        model.notesModel.findByIdAndUpdate({
+            _id: req.body.id
+        }, {
+            isArchived: true
+        }, (err, data) => {
+            if (data) resolve(data)
+            else reject(err)
+        })
+    })
+}
+exports.unArchive = async (req) => {
+    return await new Promise((resolve, reject) => {
+        model.notesModel.findByIdAndUpdate({
+            _id: req.body.id
+        }, {
+            isArchived: false
+        }, (err, data) => {
+            if (data) resolve(data)
+            else reject(err)
+        })
+    })
+}
+
+exports.addReminder = async (req) => {
+    return await new Promise((resolve, reject) => {
+        model.notesModel.findOneAndUpdate({
+            _id: req.body.id
+        }, {
+            reminder: req.body.reminder
+        }, (err, data) => {
+            if (data) resolve(data)
+            else reject(err)
+        })
+    })
+}
+
 exports.collaborate = async (req) => {
     return await new Promise((resolve, reject) => {
-        if (!req.decoded.payload.id == req.body.collabId) {
+        if (req.decoded.payload.id != req.body.collabId) {
             collabModel.collaborateModel.findOne({
                 noteId: req.body.noteId
             }, (err, data) => {
@@ -87,6 +126,32 @@ exports.collaborate = async (req) => {
                     }
                 }
             })
-        } else reject("One cannot collaborate self!!")
+        } else reject("One cannot collaborate self!!");
+    })
+}
+exports.getCollaborators = async (req) => {
+    return await new Promise((resolve, reject) => {
+        collabModel.collaborateModel.findOne({
+            noteId: req.body.noteId
+        }, (err, data) => {
+            if (err) reject(err)
+            else resolve(data.collaboratorsId)
+        })
+    })
+}
+exports.deleteCollaborator = async (req) => {
+    return await new Promise((resolve, reject) => {
+        console.log(req.body);
+
+        collabModel.collaborateModel.updateOne({
+            noteId: req.body.noteId
+        }, {
+            $pull: {
+                collaboratorsId: req.body.collabId
+            }
+        }, (err, data) => {
+            if (data) resolve(data)
+            else reject(err)
+        })
     })
 }
