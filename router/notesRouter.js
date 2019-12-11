@@ -11,5 +11,6 @@ notesRouter.get('/getCollaborators', verifyToken.userVerify, notesController.get
 notesRouter.put('/deleteCollaborator', verifyToken.userVerify, notesController.deleteCollaborator);
 notesRouter.put('/archive', verifyToken.userVerify, notesController.archive);
 notesRouter.put('/unArchive', verifyToken.userVerify, notesController.unArchive);
-notesRouter.post('/addReminder', verifyToken.userVerify, notesController.addReminder)
+notesRouter.post('/addReminder', verifyToken.userVerify, notesController.addReminder);
+notesRouter.put('/deleteReminder', verifyToken.userVerify, notesController.deleteReminder);
 module.exports = notesRouter;
