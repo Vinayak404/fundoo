@@ -1,5 +1,6 @@
 const model = require('../model/notesModel')
 const collabModel = require('../model/collaborateModel')
+const redisCache = require('../helpers/redis')
 exports.addNote = (req) => {
     console.log(req.decoded);
 
@@ -11,22 +12,57 @@ exports.addNote = (req) => {
         });
         note.save((err, data) => {
             if (err) reject(err)
-            else resolve(data)
+            else {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            }
         });
     })
 }
+
+
 exports.getNotes = (req) => {
     return new Promise((resolve, reject) => {
-        model.notesModel.find({
-            _userId: req.decoded.payload.id,
-            isDeleted: false,
-            isArchived: false
-        }, (err, data) => {
-            if (err) reject(err)
-            else resolve(data)
+        //checking for data in cache
+        redisCache.getCacheNotes(req.decoded.payload.id, (err, data) => {
+            if (data) resolve(data), console.log('data found in cache');
+
+            else {
+                //if cached data not found, check in database
+                console.log('data not found in cache-->moving to database');
+
+                model.notesModel.find({
+                    _userId: req.decoded.payload.id,
+                    isDeleted: false,
+                    isArchived: false
+                }, (err, data) => {
+                    if (err) reject(err)
+                    else {
+                        resolve(data)
+                        //take the data from database and add the same to the cache
+                        let cacheNote = {}
+                        cacheNote.id = req.decoded.payload.id;
+                        cacheNote.notes = data
+                        redisCache.cacheNotes(cacheNote, (err, data) => {
+                            if (data) console.log('cached the notes');
+                            else console.log("error in caching notes", err);
+
+
+                        })
+                    }
+                })
+            }
         })
+
     })
 }
+
+
 exports.deleteNote = (req) => {
     return new Promise((resolve, reject) => {
         model.notesModel.findByIdAndUpdate({
@@ -35,10 +71,20 @@ exports.deleteNote = (req) => {
             isDeleted: true
         }, (err, data) => {
             if (err) reject(err)
-            else resolve(data)
+            else {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            }
         })
     })
 }
+
+
 exports.editNote = (req) => {
     return new Promise((resolve, reject) => {
         model.notesModel.findByIdAndUpdate({
@@ -48,10 +94,20 @@ exports.editNote = (req) => {
             description: req.body.description
         }, (err, data) => {
             if (err) reject(err)
-            else resolve(data)
+            else {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            }
         })
     })
 }
+
+
 exports.archive = async (req) => {
     return await new Promise((resolve, reject) => {
         model.notesModel.findByIdAndUpdate({
@@ -59,11 +115,20 @@ exports.archive = async (req) => {
         }, {
             isArchived: true
         }, (err, data) => {
-            if (data) resolve(data)
-            else reject(err)
+            if (data) {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            } else reject(err)
         })
     })
 }
+
+
 exports.unArchive = async (req) => {
     return await new Promise((resolve, reject) => {
         model.notesModel.findByIdAndUpdate({
@@ -71,11 +136,19 @@ exports.unArchive = async (req) => {
         }, {
             isArchived: false
         }, (err, data) => {
-            if (data) resolve(data)
-            else reject(err)
+            if (data) {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            } else reject(err)
         })
     })
 }
+
 
 exports.addReminder = async (req) => {
     return await new Promise((resolve, reject) => {
@@ -84,11 +157,43 @@ exports.addReminder = async (req) => {
         }, {
             reminder: req.body.reminder
         }, (err, data) => {
-            if (data) resolve(data)
-            else reject(err)
+            if (data) {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            } else reject(err)
         })
     })
 }
+
+
+exports.deleteReminder = async (req) => {
+    return await new Promise((resolve, reject) => {
+        model.notesModel.updateOne({
+            _id: req.body.id
+        }, {
+            $unset: {
+                reminder: ''
+            }
+        }, (err, data) => {
+            if (err) reject(err)
+            else {
+                resolve(data)
+                redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                    if (err) console.log('err in deleting cache');
+                    else console.log('deleted the cached notes', data);
+
+
+                })
+            }
+        })
+    })
+}
+
 
 exports.collaborate = async (req) => {
     return await new Promise((resolve, reject) => {
@@ -129,6 +234,8 @@ exports.collaborate = async (req) => {
         } else reject("One cannot collaborate self!!");
     })
 }
+
+
 exports.getCollaborators = async (req) => {
     return await new Promise((resolve, reject) => {
         collabModel.collaborateModel.findOne({
@@ -139,6 +246,8 @@ exports.getCollaborators = async (req) => {
         })
     })
 }
+
+
 exports.deleteCollaborator = async (req) => {
     return await new Promise((resolve, reject) => {
         console.log(req.body);
