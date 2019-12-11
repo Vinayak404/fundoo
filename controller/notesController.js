@@ -86,7 +86,7 @@ exports.archive = (req, res) => {
                 response.data = data;
                 res.status(200).send(response);
             }).catch((err) => {
-                response.success = true;
+                response.success = false;
                 response.err = err;
                 res.status(500).send(response);
             })
@@ -130,6 +130,27 @@ exports.addReminder = (req, res) => {
         console.log(e);
     }
 }
+
+exports.deleteReminder = (req, res) => {
+    try {
+        let response = {};
+        notesServices.deleteReminder(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.error = err;
+                res.status(422).send(response);
+            })
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
 exports.collaborate = (req, res) => {
     try {
         req.checkBody('noteId', 'invalid model id').notEmpty();
