@@ -17,8 +17,6 @@ exports.addNote = (req) => {
                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                     if (err) console.log('err in deleting cache');
                     else console.log('deleted the cached notes', data);
-
-
                 })
             }
         });
@@ -120,9 +118,7 @@ exports.archive = async (req) => {
                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                     if (err) console.log('err in deleting cache');
                     else console.log('deleted the cached notes', data);
-
-
-                })
+                });
             } else reject(err)
         })
     })
@@ -141,8 +137,6 @@ exports.unArchive = async (req) => {
                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                     if (err) console.log('err in deleting cache');
                     else console.log('deleted the cached notes', data);
-
-
                 })
             } else reject(err)
         })
@@ -162,8 +156,6 @@ exports.addReminder = async (req) => {
                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                     if (err) console.log('err in deleting cache');
                     else console.log('deleted the cached notes', data);
-
-
                 })
             } else reject(err)
         })
@@ -186,8 +178,6 @@ exports.deleteReminder = async (req) => {
                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                     if (err) console.log('err in deleting cache');
                     else console.log('deleted the cached notes', data);
-
-
                 })
             }
         })
