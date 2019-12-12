@@ -44,6 +44,5 @@ exports.userVerify = (req, res, next) => {
                 }
             });
         } else console.log('error', err);
-
     });
 };
