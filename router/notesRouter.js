@@ -9,6 +9,7 @@
  *********************************************************************************************************/
 const notesController = require('../controller/notesController');
 const verifyToken = require('../helpers/token');
+const elastic = require('../helpers/elasticSearch')
 const express = require('express');
 const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
@@ -22,4 +23,5 @@ notesRouter.put('/archive', verifyToken.userVerify, notesController.archive);
 notesRouter.put('/unArchive', verifyToken.userVerify, notesController.unArchive);
 notesRouter.post('/addReminder', verifyToken.userVerify, notesController.addReminder);
 notesRouter.put('/deleteReminder', verifyToken.userVerify, notesController.deleteReminder);
+notesRouter.post('/createIndex', verifyToken.userVerify, elastic.createIndex)
 module.exports = notesRouter;
