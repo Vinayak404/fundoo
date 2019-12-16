@@ -1,4 +1,5 @@
 const notesServices = require('../services/notesServices')
+const elastic = require('../helpers/elasticSearch')
 exports.addNote = (req, res) => {
     console.log(req.decoded);
 
@@ -31,6 +32,10 @@ exports.getNotes = (req, res) => {
                 response.success = true;
                 response.data = data
                 res.status(200).send(response)
+                elastic.addDocument(data, (err, data) => {
+                    if (data) console.log("added to elastic successfully");
+                    else console.log("fails to add to elastic");
+                })
             }).catch((err) => {
                 response.success = false;
                 response.error = err;
