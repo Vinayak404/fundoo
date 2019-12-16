@@ -23,5 +23,6 @@ notesRouter.put('/archive', verifyToken.userVerify, notesController.archive);
 notesRouter.put('/unArchive', verifyToken.userVerify, notesController.unArchive);
 notesRouter.post('/addReminder', verifyToken.userVerify, notesController.addReminder);
 notesRouter.put('/deleteReminder', verifyToken.userVerify, notesController.deleteReminder);
-notesRouter.post('/createIndex', verifyToken.userVerify, elastic.createIndex)
+notesRouter.post('/createIndex', verifyToken.userVerify, elastic.createIndex);
+notesRouter.post('/search',verifyToken.userVerify, elastic.search)
 module.exports = notesRouter;
