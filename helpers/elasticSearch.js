@@ -3,20 +3,22 @@ const client = new elasticsearch.Client({
     hosts: ['http://127.0.0.1:9200/']
 });
 
-exports.createIndex = (req, res) => {
-    let indexName = req.decoded.payload.id
-    console.log("Index---->", indexName);
-    client.indices.create({
-        index: indexName
-    }, (err, data) => {
-        if (data) {
-            console.log("result in index elastic search-->", data);
-            res.status(200).send(data)
-        } else {
-            res.status(422).send(err)
-            console.log("error in index", err);
-        }
-    })
+exports.createIndex = (req) => {
+    try {
+        let indexName = req.decoded.payload.id
+        console.log("Index---->", indexName);
+        client.indices.create({
+            index: indexName
+        }, (err, data) => {
+            if (data) {
+                console.log("result in index elastic search-->", data);
+            } else {
+                console.log("error in index", err);
+            }
+        })
+    } catch (e) {
+        console.log(e);
+    }
 }
 exports.addDocument = (data1) => {
     try {
@@ -25,7 +27,7 @@ exports.addDocument = (data1) => {
         data1.forEach(element => {
             bulk.push({
                 index: {
-                    _index: element.userId,
+                    _index: element._userId,
                     _type: "notes"
                 }
             });
@@ -51,16 +53,16 @@ exports.addDocument = (data1) => {
 
     }
 }
-  
+
 exports.search = (req, res) => {
     try {
-        console.log(req.decoded.payload.id);
+        console.log("here in search", req.decoded.payload.id, "khjv", req.body.key);
 
         let userid = req.decoded.payload.id
         let body = {
             query: {
                 query_string: {
-                    query: `${req.body.key}`,
+                    query: `*${req.body.key}*`,
                     analyze_wildcard: true,
                     fields: ["title", "description", "isDeleted", "isArchived"]
                 }
@@ -78,6 +80,23 @@ exports.search = (req, res) => {
                 console.log(err)
                 res.status(404).send(err)
             })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.deleteDocument = (req) => {
+    try {
+        client.indices.delete({
+            index: req.decoded.payload.id
+        }, (err, data) => {
+            if (data) {
+                console.log("deleted doc successfully");
+                this.createIndex(req)
+            } else {
+                console.log("error while deleting index");
+            }
+        })
     } catch (e) {
         console.log(e);
     }
