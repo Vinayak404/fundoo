@@ -9,7 +9,7 @@
  *********************************************************************************************************/
 const notesController = require('../controller/notesController');
 const verifyToken = require('../helpers/token');
-const elastic = require('../helpers/elasticSearch')
+const elastic = require('../helpers/elasticSearch');
 const express = require('express');
 const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
@@ -24,5 +24,13 @@ notesRouter.put('/unArchive', verifyToken.userVerify, notesController.unArchive)
 notesRouter.post('/addReminder', verifyToken.userVerify, notesController.addReminder);
 notesRouter.put('/deleteReminder', verifyToken.userVerify, notesController.deleteReminder);
 notesRouter.post('/createIndex', verifyToken.userVerify, elastic.createIndex);
-notesRouter.post('/search',verifyToken.userVerify, elastic.search)
+notesRouter.post('/search', verifyToken.userVerify, elastic.search);
+notesRouter.put('/pin', verifyToken.userVerify, notesController.pin);
+notesRouter.post('/createLabel', verifyToken.userVerify, notesController.createLabel);
+notesRouter.put('/addLabel', verifyToken.userVerify, notesController.addLabel);
+notesRouter.put('/removeLabel', verifyToken.userVerify, notesController.removeLabel);
+notesRouter.get('/getLabels', verifyToken.userVerify, notesController.getLabels);
+notesRouter.put('/editLabel', verifyToken.userVerify, notesController.editLabel);
+notesRouter.delete('/deleteLabel', verifyToken.userVerify, notesController.deleteLabel);
+
 module.exports = notesRouter;
