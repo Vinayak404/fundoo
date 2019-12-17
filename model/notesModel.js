@@ -10,7 +10,7 @@ const notes = new Schema({
         required: true
     },
     _userId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true
     },
@@ -21,6 +21,15 @@ const notes = new Schema({
     isArchived: {
         type: Boolean,
         default: false
+    },
+    pinned: {
+        required: true,
+        type: Boolean,
+        default: false
+    },
+    labels: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "label"
     },
     reminder: {
         type: Date,
