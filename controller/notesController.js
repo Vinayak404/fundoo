@@ -24,6 +24,8 @@ exports.addNote = (req, res) => {
             })
     }
 }
+
+
 exports.getNotes = (req, res) => {
     try {
         let response = {}
@@ -46,6 +48,8 @@ exports.getNotes = (req, res) => {
 
     }
 }
+
+
 exports.deleteNote = (req, res) => {
     try {
         let response = {};
@@ -65,6 +69,8 @@ exports.deleteNote = (req, res) => {
 
     }
 }
+
+
 exports.editNote = (req, res) => {
     try {
         let response = {};
@@ -82,6 +88,8 @@ exports.editNote = (req, res) => {
         console.log(e);
     }
 }
+
+
 exports.archive = (req, res) => {
     try {
         let response = {};
@@ -100,6 +108,8 @@ exports.archive = (req, res) => {
 
     }
 }
+
+
 exports.unArchive = (req, res) => {
     try {
         let response = {};
@@ -117,6 +127,8 @@ exports.unArchive = (req, res) => {
         console.log(e);
     }
 }
+
+
 exports.addReminder = (req, res) => {
     try {
         let response = {};
@@ -182,6 +194,8 @@ exports.collaborate = (req, res) => {
         console.log(e);
     }
 }
+
+
 exports.getCollaborators = (req, res) => {
     try {
         let response = {};
@@ -200,6 +214,8 @@ exports.getCollaborators = (req, res) => {
         console.log(e)
     };
 }
+
+
 exports.deleteCollaborator = (req, res) => {
     try {
         let response = {};
@@ -213,6 +229,140 @@ exports.deleteCollaborator = (req, res) => {
                 response.success = false
                 res.status(404).send(response)
             })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.pin = (req, res) => {
+    try {
+        let response = {}
+        notesServices.pin(req)
+            .then((data) => {
+                response.success = true
+                response.data = data
+                res.status(200).send(response)
+            }).catch((e) => {
+                response.success = false
+                response.error = e
+                res.status(404).send(response)
+            })
+    } catch (e) {
+        console.log(e)
+    }
+
+}
+
+exports.createLabel = (req, res) => {
+    try {
+        let response = {}
+        req.checkBody("name", "name cant be empty").notEmpty()
+        let error = req.validationErrors();
+        if (error) response.error = error, response.success = false, res.status(404).send(response)
+        else {
+            notesServices.createLabel(req)
+                .then((data) => {
+                    response.success = true, response.data = data, res.status(200).send(response)
+                })
+                .catch((e) => {
+                    response.success = false, response.error = e, res.status(200).send(response)
+                })
+        }
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+
+
+exports.getLabels = (req, res) => {
+    try {
+        let resp = {}
+        notesServices.getLabels(req)
+            .then((data) => {
+                resp.data = data, resp.success = true, res.status(200).send(resp)
+            }).catch(e => {
+                resp.error = e, resp.success = false, res.status(500).send(resp)
+            })
+
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+exports.editLabel = (req, res) => {
+    try {
+        let response = {};
+        notesServices.editLabel(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = true;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.deleteLabel = (req, res) => {
+    try {
+        let response = {};
+        notesServices.deleteLabel(req)
+
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.error = err;
+                res.status(500).send(response)
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+
+exports.addLabel = (req, res) => {
+    try {
+        let response = {};
+        req.checkBody("noteId", "invalid noteId").notEmpty();
+        req.checkBody("labelId", "invalid labelID").notEmpty();
+        let err = req.validationErrors();
+        if (err) response.error = err, response.success = false, res.status(422).send(response);
+        else {
+            notesServices.addLabel(req)
+                .then((data) => {
+                    response.success = true, response.data = data, res.status(200).send(response)
+                }).catch((e) => {
+                    response.success = false, response.error = e, res.status(404).send(response)
+                })
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.removeLabel = (req, res) => {
+    try {
+        let response = {};
+        req.checkBody("noteId", "invalid noteId").notEmpty();
+        req.checkBody("labelId", "invalid labelID").notEmpty();
+        let err = req.validationErrors();
+        if (err) response.error = err, response.success = false, res.status(422).send(response);
+        else {
+            notesServices.removeLabel(req)
+                .then((data) => {
+                    response.success = true, response.data = data, res.status(200).send(response)
+                }).catch((e) => {
+                    response.success = false, response.error = e, res.status(404).send(response)
+                })
+        }
     } catch (e) {
         console.log(e);
     }
