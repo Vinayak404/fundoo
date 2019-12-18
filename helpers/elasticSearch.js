@@ -3,6 +3,7 @@ const client = new elasticsearch.Client({
     hosts: ['http://127.0.0.1:9200/']
 });
 
+
 exports.createIndex = (req) => {
     try {
         let indexName = req.decoded.payload.id
@@ -20,6 +21,8 @@ exports.createIndex = (req) => {
         console.log(e);
     }
 }
+
+
 exports.addDocument = (data1) => {
     try {
         let bulk = []
@@ -84,6 +87,7 @@ exports.search = (req, res) => {
         console.log(e);
     }
 }
+
 
 exports.deleteDocument = (req) => {
     try {

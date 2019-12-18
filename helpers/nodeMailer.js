@@ -1,5 +1,7 @@
+// Setting up the NodeMailer to Send the Token to the User for authentication.
 var nodemailer = require('nodemailer');
 exports.sendMail = (url, email) => {
+    console.log(process.env.AWS_REGION);
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

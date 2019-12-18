@@ -40,6 +40,6 @@ exports.getCacheNotes = (id, callback) => {
             callback(null, token);
             console.log('cached data');
 
-        } else callback(err), console.log('cachenote not found');;
+        } else callback(err), console.log('cachenote not found');
     })
 }
