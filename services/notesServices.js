@@ -6,7 +6,6 @@ const labelModel = require('../model/labelModel')
 exports.addNote = (req) => {
     try {
         console.log(req.decoded);
-
         return new Promise((resolve, reject) => {
             let note = new model.notesModel({
                 title: req.body.title,
@@ -37,7 +36,6 @@ exports.getNotes = (req) => {
             //checking for data in cache
             redisCache.getCacheNotes(req.decoded.payload.id, (err, data) => {
                 if (data) resolve(data), console.log('data found in cache');
-
                 else {
                     //if cached data not found, check in database
                     console.log('data not found in cache-->moving to database');
@@ -46,9 +44,8 @@ exports.getNotes = (req) => {
                         _userId: req.decoded.payload.id,
                         isDeleted: false,
                         isArchived: false
-                    }, (err, data) => {
-                        if (err) reject(err)
-                        else {
+                    }).populate('label').exec((err, data) => {
+                        if (data) {
                             resolve(data)
                             //take the data from database and add the same to the cache
                             let cacheNote = {}
@@ -57,13 +54,16 @@ exports.getNotes = (req) => {
                             redisCache.cacheNotes(cacheNote, (err, data) => {
                                 if (data) console.log('cached the notes');
                                 else console.log("error in caching notes", err);
-
-
                             })
+                        } else {
+                            reject(err)
                         }
+
                     })
+
                 }
             })
+
 
         })
     } catch (e) {
@@ -87,8 +87,6 @@ exports.deleteNote = (req) => {
                     redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                         if (err) console.log('err in deleting cache');
                         else console.log('deleted the cached notes', data);
-
-
                     })
                 }
             })
@@ -115,8 +113,6 @@ exports.editNote = async (req) => {
                     redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                         if (err) console.log('err in deleting cache');
                         else console.log('deleted the cached notes', data);
-
-
                     })
                 }
             })
@@ -356,7 +352,6 @@ exports.pin = async (req) => {
                     }
                 })
         })
-
     } catch (e) {
         console.log(e)
     };
@@ -388,11 +383,18 @@ exports.createLabel = async (req) => {
 exports.getLabels = async (req) => {
     return await new Promise((resolve, reject) => {
         labelModel.labelModel.find({
-            _userId: req.decoded.payload.id
-        }, (err, data) => {
-            if (err) reject(err)
-            else resolve(data)
-        })
+                _userId: req.decoded.payload.id
+            }).populate('notes')
+            .then((data) => {
+                resolve(data)
+                console.log((data));
+
+            })
+            .catch((e) => {
+                reject(err);
+
+            })
+
     })
 }
 
@@ -409,7 +411,6 @@ exports.editLabel = async (req) => {
             }, (err, data) => {
                 if (err || !data) reject(err)
                 else resolve(data)
-
             })
         })
     } catch (e) {
@@ -430,7 +431,6 @@ exports.deleteLabel = async (req) => {
         })
     } catch (e) {
         console.log(e);
-
     }
 }
 
@@ -451,20 +451,28 @@ exports.addLabel = async (req) => {
                         }
                     }, (err, data) => {
                         if (data) {
-                            resolve(data)
-                            elastic.deleteDocument(req)
-                            redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
-                                if (err) console.log('err in deleting cache');
-                                else console.log('deleted the cached notes', data);
-
-
+                            labelModel.labelModel.findByIdAndUpdate({
+                                _id: req.body.labelId,
+                                _userId: req.decoded.payload.id
+                            }, {
+                                $push: {
+                                    notes: req.body.noteId
+                                }
+                            }, (err, data) => {
+                                if (data) {
+                                    resolve(data)
+                                    elastic.deleteDocument(req)
+                                    redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                                        if (err) console.log('err in deleting cache');
+                                        else console.log('deleted the cached notes', data);
+                                    })
+                                } else reject(err)
                             })
                         } else reject(err)
                     })
                 } else reject("already labeled")
             }
         })
-
     })
 }
 
@@ -492,8 +500,6 @@ exports.removeLabel = async (req) => {
                                 redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                                     if (err) console.log('err in deleting cache');
                                     else console.log('deleted the cached notes', data);
-
-
                                 })
                             }
                         })
@@ -503,6 +509,5 @@ exports.removeLabel = async (req) => {
         })
     } catch (e) {
         console.log(e);
-
     }
 }

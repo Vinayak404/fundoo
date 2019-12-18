@@ -1,3 +1,12 @@
+/********************************************************************************************************
+ * @Execution : default node : cmd> npm start
+ * @Purpose : backend of user login using express node.js for Fundoo app
+ * @description :MongoDB Model for Notes.
+ * @overview :API's for backend.
+ * @author : Vinayaka.S.V <vinayakavastrad@gmail.com> 
+ * @version : 1.0
+ * @since : 30/11/2019
+ *********************************************************************************************************/
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const notes = new Schema({
@@ -27,10 +36,10 @@ const notes = new Schema({
         type: Boolean,
         default: false
     },
-    labels: {
-        type: [mongoose.Schema.Types.ObjectId],
+    labels: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: "label"
-    },
+    }],
     reminder: {
         type: Date,
     }
