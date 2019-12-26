@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "debug": "nodemon --inspect server.js"
   },
   "author": "Vinayak",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "elasticsearch": "^16.5.0",
     "email-existence": "^0.1.6",

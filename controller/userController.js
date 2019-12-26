@@ -50,6 +50,7 @@ exports.login = (req, res) => {
             userServices.login(req, (err, data) => {
                 if (data) {
                     response.success = true;
+                    response.user = data;
                     const tok = token.tokenGenerator({
                         "email": req.body.email,
                         "id": data._id
@@ -57,11 +58,13 @@ exports.login = (req, res) => {
                     redisCache.addCache(tok, (err, data2) => {
                         if (err) {
                             response.err = err;
+                            response.token = tok
                             response.success = false
                             res.status(422).send(response)
                         } else {
                             response.success = true
                             response.data = data2;
+                            response.token = tok
                             res.status(200).send(response);
                         }
                     })
@@ -97,8 +100,8 @@ exports.forgotPassword = (req, res) => {
                     console.log(payload);
                     let obj = token.tokenGenerator(payload)
                     let token1 = obj.token
-                    console.log(token1);
-                    nodeMailer.sendMail(token, req.body.email)
+                    console.log(`${process.env.URL}${token1}`);
+                    nodeMailer.sendMail(`${process.env.URL}${token1}`, req.body.email)
                     response.success = true;
                     response.data = data;
                     res.status(200).send(response);
