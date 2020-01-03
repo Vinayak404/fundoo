@@ -75,6 +75,7 @@ exports.getNotes = (req) => {
 exports.deleteNote = (req) => {
     try {
         return new Promise((resolve, reject) => {
+
             model.notesModel.findByIdAndUpdate({
                 _id: req.body._id
             }, {
@@ -83,7 +84,10 @@ exports.deleteNote = (req) => {
                 if (err) reject(err)
                 else {
                     resolve(data)
+                    console.log("PAyLoad", data, req.decoded.payload);
                     elastic.deleteDocument(req)
+                    console.log("PAyLoad", req.decoded.payload);
+
                     redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
                         if (err) console.log('err in deleting cache');
                         else console.log('deleted the cached notes', data);
@@ -509,5 +513,38 @@ exports.removeLabel = async (req) => {
         })
     } catch (e) {
         console.log(e);
+    }
+}
+exports.getArchives = async (req) => {
+    try {
+        return await new Promise((resolve, reject) => {
+            model.notesModel.find({
+                _userId: req.decoded.payload.id,
+                isDeleted: false,
+                isArchived: true
+            }, (err, data) => {
+                if (data) resolve(data)
+                else reject(err)
+            })
+        })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+exports.getTrash = async (req) => {
+    try {
+        return await new Promise((resolve, reject) => {
+            model.notesModel.find({
+                _userId: req.decoded.payload.id,
+                isDeleted: true
+            }, (err, data) => {
+                if (data) resolve(data)
+                else reject(err)
+            })
+        })
+    } catch (e) {
+        console.log(e);
+
     }
 }

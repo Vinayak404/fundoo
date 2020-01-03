@@ -15,8 +15,8 @@ const sns = require('../helpers/sns')
 const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
 notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
-notesRouter.put('/deleteNote', notesController.deleteNote);
-notesRouter.put('/editNote', notesController.editNote);
+notesRouter.put('/deleteNote', verifyToken.userVerify, notesController.deleteNote);
+notesRouter.put('/editNote', verifyToken.userVerify, notesController.editNote);
 notesRouter.post('/collaborate', verifyToken.userVerify, notesController.collaborate);
 notesRouter.get('/getCollaborators', verifyToken.userVerify, notesController.getCollaborators);
 notesRouter.put('/deleteCollaborator', verifyToken.userVerify, notesController.deleteCollaborator);
@@ -33,5 +33,6 @@ notesRouter.put('/removeLabel', verifyToken.userVerify, notesController.removeLa
 notesRouter.get('/getLabels', verifyToken.userVerify, notesController.getLabels);
 notesRouter.put('/editLabel', verifyToken.userVerify, notesController.editLabel);
 notesRouter.delete('/deleteLabel', verifyToken.userVerify, notesController.deleteLabel);
-
+notesRouter.get('/getArchives', verifyToken.userVerify, notesController.getArchives);
+notesRouter.get('/getTrash', verifyToken.userVerify, notesController.getTrash);
 module.exports = notesRouter;

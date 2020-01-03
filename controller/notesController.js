@@ -54,7 +54,6 @@ exports.deleteNote = (req, res) => {
     try {
         let response = {};
         notesServices.deleteNote(req)
-
             .then((data) => {
                 response.success = true;
                 response.data = data;
@@ -365,5 +364,33 @@ exports.removeLabel = (req, res) => {
         }
     } catch (e) {
         console.log(e);
+    }
+}
+exports.getArchives = (req, res) => {
+    try {
+        let response = {}
+        notesServices.getArchives(req)
+            .then((data) => {
+                response.success = true, response.data = data, res.status(200).send(response)
+            }).catch((e) => {
+                response.success = false, response.error = e, res.status(404).send(response)
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+exports.getTrash = (req, res) => {
+    try {
+        let response = {}
+        notesServices.getTrash(req)
+            .then((data) => {
+                response.success = true, response.data = data, res.status(200).send(response)
+            }).catch((e) => {
+                response.success = false, response.error = e, res.status(404).send(response)
+            })
+    } catch (e) {
+        console.log(e);
+
     }
 }
