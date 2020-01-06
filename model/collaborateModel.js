@@ -18,7 +18,7 @@ const collaborate = new Schema({
     collaboratorsId: {
         type: [Mongoose.Schema.Types.ObjectId],
         required: true,
-        ref: "user"
+        ref: "user" 
     },
     noteId: {
         type: Schema.Types.ObjectId,

@@ -35,4 +35,7 @@ notesRouter.put('/editLabel', verifyToken.userVerify, notesController.editLabel)
 notesRouter.delete('/deleteLabel', verifyToken.userVerify, notesController.deleteLabel);
 notesRouter.get('/getArchives', verifyToken.userVerify, notesController.getArchives);
 notesRouter.get('/getTrash', verifyToken.userVerify, notesController.getTrash);
+notesRouter.delete('/deleteNoteForever', verifyToken.userVerify, notesController.deleteNoteForever);
+notesRouter.put('/color', verifyToken.userVerify, notesController.color);
+notesRouter.get('/collaboratedNotes', verifyToken.userVerify, notesController.getCollaboratedNotes)
 module.exports = notesRouter;

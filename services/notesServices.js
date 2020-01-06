@@ -10,7 +10,12 @@ exports.addNote = (req) => {
             let note = new model.notesModel({
                 title: req.body.title,
                 description: req.body.description,
-                _userId: req.decoded.payload.id
+                _userId: req.decoded.payload.id,
+                isArchived: req.body.archive,
+                pinned: req.body.pin,
+                labels: req.body.label,
+                color: req.body.color,
+                reminder: req.body.reminder
             });
             note.save((err, data) => {
                 if (err) reject(err)
@@ -297,6 +302,7 @@ exports.getCollaborators = async (req) => {
 }
 
 
+
 exports.deleteCollaborator = async (req) => {
     try {
         return await new Promise((resolve, reject) => {
@@ -546,5 +552,92 @@ exports.getTrash = async (req) => {
     } catch (e) {
         console.log(e);
 
+    }
+}
+
+exports.deleteNoteForever = async (req) => {
+    try {
+        return await new Promise((resolve, reject) => {
+            console.log(req.body, "jfhf", req.decoded.payload.id);
+
+            model.notesModel.findOneAndDelete({
+                _id: req.body._id,
+                _userId: req.decoded.payload.id
+            }, (err, data) => {
+                if (err) reject(err)
+                else resolve(data)
+            })
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+exports.color = async (req) => {
+    try {
+        return await new Promise((resolve, reject) => {
+            console.log(req.body, "jfrhahf", req.decoded.payload.id)
+            model.notesModel.findByIdAndUpdate({
+                _id: req.body.id
+            }, {
+                color: req.body.color
+            }, (err, data) => {
+                if (data) {
+                    resolve(data)
+                    elastic.deleteDocument(req)
+                    redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                        if (err) console.log('err in deleting cache');
+                        else console.log('deleted the cached notes', data);
+                    });
+                } else reject(err)
+            })
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+exports.getCollaboratedNotes = (req) => {
+    try {
+        new Promise((resolve, reject) => {
+            collabModel.collaborateModel.find({}, (err, data) => {
+                if (data) {
+                    console.log("daTa", data);
+
+                    var dataArr = [];
+                    // data.forEach(async (e) => {
+                    //     if (e.collaboratorsId.includes(req.decoded.payload.id)) {
+                    //         model.notesModel.find({
+                    //             _id: e.noteId
+                    //         }, (err, data) => {
+                    //             console.log("DaTa", data)
+                    //             if (data) {
+                    //                 console.log("noTEDAtA", data);
+                    //                 dataArr.push(data)
+                    //                 console.log("JREH RTF", dataArr);
+                    //             } else console.log("ERTGBG", err);
+                    //         })
+                    //     }
+                    // })
+                    data.forEach(e => {
+                        if (e.collaboratorsId.includes(req.decoded.payload.id)) {
+                            dataArr.push(e.noteId)
+                        }
+                    })
+                    console.log("DataAARR", dataArr);
+                    let not = []
+                    for (i of dataArr) {
+                        model.notesModel.findOne({
+                            _id: i
+                        }, (err, data) => {
+                            if (data) not.push(data)
+                        })
+                    }
+                    console.log("woohoo", not);
+
+                    resolve(not)
+                } else reject(err);
+            })
+        })
+    } catch (e) {
+        console.log(e);
     }
 }

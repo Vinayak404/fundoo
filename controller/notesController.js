@@ -394,3 +394,59 @@ exports.getTrash = (req, res) => {
 
     }
 }
+
+exports.deleteNoteForever = (req, res) => {
+    try {
+        let response = {};
+        notesServices.deleteNoteForever(req)
+
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.error = err;
+                res.status(500).send(response)
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+exports.color = (req, res) => {
+    try {
+        let response = {};
+        notesServices.color(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
+exports.getCollaboratedNotes = (req, res) => {
+    try {
+        let response = {};
+        notesServices.getCollaboratedNotes(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = false;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+
+    }
+}
