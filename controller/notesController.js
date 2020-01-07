@@ -437,6 +437,8 @@ exports.getCollaboratedNotes = (req, res) => {
         let response = {};
         notesServices.getCollaboratedNotes(req)
             .then((data) => {
+                console.log("COntrolErf", data);
+
                 response.success = true;
                 response.data = data;
                 res.status(200).send(response);

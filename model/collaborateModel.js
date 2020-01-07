@@ -15,11 +15,11 @@ const collaborate = new Schema({
         required: true,
         ref: "user"
     },
-    collaboratorsId: {
-        type: [Mongoose.Schema.Types.ObjectId],
+    collaboratorsId: [{
+        type: Mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: "user" 
-    },
+        ref: "user"
+    }],
     noteId: {
         type: Schema.Types.ObjectId,
         ref: "notes",

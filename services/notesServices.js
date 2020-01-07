@@ -49,7 +49,7 @@ exports.getNotes = (req) => {
                         _userId: req.decoded.payload.id,
                         isDeleted: false,
                         isArchived: false
-                    }).populate('label').exec((err, data) => {
+                    }).populate('labels').exec((err, data) => {
                         if (data) {
                             resolve(data)
                             //take the data from database and add the same to the cache
@@ -595,47 +595,43 @@ exports.color = async (req) => {
         console.log(e);
     }
 }
-exports.getCollaboratedNotes = (req) => {
+exports.getCollaboratedNotes = async (req) => {
     try {
-        new Promise((resolve, reject) => {
-            collabModel.collaborateModel.find({}, (err, data) => {
-                if (data) {
-                    console.log("daTa", data);
+        return await new Promise((resolve, reject) => {
+            // collabModel.collaborateModel.find({}, (err, data) => {
+            //     if (data) {
+            //         console.log("daTa", data);
 
-                    var dataArr = [];
-                    // data.forEach(async (e) => {
-                    //     if (e.collaboratorsId.includes(req.decoded.payload.id)) {
-                    //         model.notesModel.find({
-                    //             _id: e.noteId
-                    //         }, (err, data) => {
-                    //             console.log("DaTa", data)
-                    //             if (data) {
-                    //                 console.log("noTEDAtA", data);
-                    //                 dataArr.push(data)
-                    //                 console.log("JREH RTF", dataArr);
-                    //             } else console.log("ERTGBG", err);
-                    //         })
-                    //     }
-                    // })
-                    data.forEach(e => {
-                        if (e.collaboratorsId.includes(req.decoded.payload.id)) {
-                            dataArr.push(e.noteId)
-                        }
-                    })
-                    console.log("DataAARR", dataArr);
-                    let not = []
-                    for (i of dataArr) {
-                        model.notesModel.findOne({
-                            _id: i
-                        }, (err, data) => {
-                            if (data) not.push(data)
-                        })
-                    }
-                    console.log("woohoo", not);
+            //         var dataArr = [];
+            // data.forEach(async (e) => {
+            //     if (e.collaboratorsId.includes(req.decoded.payload.id)) {
+            //         model.notesModel.find({
+            //             _id: e.noteId
+            //         }, (err, data) => {
+            //             console.log("DaTa", data)
+            //             if (data) {
+            //                 console.log("noTEDAtA", data);
+            //                 dataArr.push(data)
+            //                 console.log("JREH RTF", dataArr);
+            //             } else console.log("ERTGBG", err);
+            //         })
+            //     }
+            // })
+            // data.forEach(e => {
+            //     if (e.collaboratorsId.includes(req.decoded.payload.id)) {
+            //         dataArr.push(e.noteId)
 
-                    resolve(not)
-                } else reject(err);
+            //     }
+            // })
+            collabModel.collaborateModel.find({
+                collaboratorsId: req.decoded.payload.id
+            }).populate('collaboratorsId noteId').exec((err, data) => {
+                if (data) resolve(data), console.log("CPLLKISWAGF", data);
+
+                else reject(err)
             })
+
+
         })
     } catch (e) {
         console.log(e);
