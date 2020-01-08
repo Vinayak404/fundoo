@@ -15,8 +15,13 @@ const collaborate = new Schema({
         required: true,
         ref: "user"
     },
+    email: {
+        type: String,
+        required: true,
+        ref: "user"
+    },
     collaboratorsId: [{
-        type: Mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
         ref: "user"
     }],

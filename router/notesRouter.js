@@ -18,7 +18,7 @@ notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
 notesRouter.put('/deleteNote', verifyToken.userVerify, notesController.deleteNote);
 notesRouter.put('/editNote', verifyToken.userVerify, notesController.editNote);
 notesRouter.post('/collaborate', verifyToken.userVerify, notesController.collaborate);
-notesRouter.get('/getCollaborators', verifyToken.userVerify, notesController.getCollaborators);
+notesRouter.post('/getCollaborators', verifyToken.userVerify, notesController.getCollaborators);
 notesRouter.put('/deleteCollaborator', verifyToken.userVerify, notesController.deleteCollaborator);
 notesRouter.put('/archive', verifyToken.userVerify, notesController.archive);
 notesRouter.put('/unArchive', verifyToken.userVerify, notesController.unArchive);

@@ -170,7 +170,7 @@ exports.deleteReminder = (req, res) => {
 exports.collaborate = (req, res) => {
     try {
         req.checkBody('noteId', 'invalid model id').notEmpty();
-        req.checkBody('collabId', 'invalid collab id').notEmpty();
+        req.checkBody('collabEmail', 'invalid collab id').isEmail();
         let error = req.validationErrors();
         let response = {};
         if (error) {

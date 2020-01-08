@@ -3,6 +3,7 @@ const collabModel = require('../model/collaborateModel')
 const redisCache = require('../helpers/redis')
 const elastic = require('../helpers/elasticSearch')
 const labelModel = require('../model/labelModel')
+const userModel = require('../model/userModel')
 exports.addNote = (req) => {
     try {
         console.log(req.decoded);
@@ -234,14 +235,15 @@ exports.deleteReminder = async (req) => {
 exports.collaborate = async (req) => {
     try {
         return await new Promise((resolve, reject) => {
-            if (req.decoded.payload.id != req.body.collabId) {
+            if (req.decoded.payload.id != req.body.userId) {
                 collabModel.collaborateModel.findOne({
                     noteId: req.body.noteId
                 }, (err, data) => {
                     if (err || data == null) {
                         let collab = new collabModel.collaborateModel({
                             userId: req.decoded.payload.id,
-                            collaboratorsId: req.body.collabId,
+                            email: req.decoded.payload.email,
+                            collaboratorsId: req.body.collabEmail,
                             noteId: req.body.noteId
                         });
                         collab.save((err, data) => {
@@ -254,7 +256,7 @@ exports.collaborate = async (req) => {
                             } else reject(err), console.log(err);
                         })
                     } else {
-                        if (data.collaboratorsId.includes(req.body.collabId)) {
+                        if (data.collaboratorsId.includes(req.body.collabEmail)) {
                             console.log(' data here', data);
 
                             reject('collab exits!!')
@@ -263,7 +265,7 @@ exports.collaborate = async (req) => {
                                 noteId: req.body.noteId
                             }, {
                                 $push: {
-                                    collaboratorsId: req.body.collabId
+                                    collaboratorsId: req.body.collabEmail
                                 }
                             }, (err, data) => {
                                 if (data) {
@@ -288,12 +290,22 @@ exports.collaborate = async (req) => {
 
 exports.getCollaborators = async (req) => {
     try {
+
+
         return await new Promise((resolve, reject) => {
             collabModel.collaborateModel.findOne({
                 noteId: req.body.noteId
             }, (err, data) => {
                 if (err) reject(err)
-                else resolve(data.collaboratorsId)
+                else {
+                    console.log("thiskAYHGtf", req.body.noteId);
+                    let allCollabs = this.getCollaboratorUsers(data.collaboratorsId)
+                    resolve(allCollabs)
+                }
+                // else resolve({
+                //     "owner": data.email,
+                //     "collabs": data.collaboratorsId
+                // })
             })
         })
     } catch (e) {
@@ -312,7 +324,7 @@ exports.deleteCollaborator = async (req) => {
                 noteId: req.body.noteId
             }, {
                 $pull: {
-                    collaboratorsId: req.body.collabId
+                    collaboratorsId: req.body.collabEmail
                 }
             }, (err, data) => {
                 if (data) resolve(data)
@@ -624,10 +636,9 @@ exports.getCollaboratedNotes = async (req) => {
             //     }
             // })
             collabModel.collaborateModel.find({
-                collaboratorsId: req.decoded.payload.id
-            }).populate('collaboratorsId noteId').exec((err, data) => {
+                collaboratorsId: req.decoded.payload.email
+            }).populate('noteId').exec((err, data) => {
                 if (data) resolve(data), console.log("CPLLKISWAGF", data);
-
                 else reject(err)
             })
 
@@ -636,4 +647,33 @@ exports.getCollaboratedNotes = async (req) => {
     } catch (e) {
         console.log(e);
     }
+}
+
+exports.getCollaboratorUsers = (colMails) => {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let collabArray = []
+            for (let uMail of colMails) {
+                let temp = await userModel.user.aggregate([{
+                    $match: {
+                        email: uMail
+                    } 
+                }, {
+                    $group: {
+                        _id: {
+                            _id: "$_id",
+                            email: "$email",
+                            lastName: "$lastName",
+                            firstName: "$firstName"
+                        }
+                    }
+                }]);
+                collabArray.push(temp[0]);
+            }
+            resolve(collabArray);
+        } catch (err) {
+            reject(err)
+        }
+    })
 }
