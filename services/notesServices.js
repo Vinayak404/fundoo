@@ -658,7 +658,7 @@ exports.getCollaboratorUsers = (colMails) => {
                 let temp = await userModel.user.aggregate([{
                     $match: {
                         email: uMail
-                    } 
+                    }
                 }, {
                     $group: {
                         _id: {
