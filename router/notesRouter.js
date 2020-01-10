@@ -17,6 +17,7 @@ notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
 notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
 notesRouter.put('/deleteNote', verifyToken.userVerify, notesController.deleteNote);
 notesRouter.put('/editNote', verifyToken.userVerify, notesController.editNote);
+notesRouter.put('/unTrash', verifyToken.userVerify, notesController.unTrash);
 notesRouter.post('/collaborate', verifyToken.userVerify, notesController.collaborate);
 notesRouter.post('/getCollaborators', verifyToken.userVerify, notesController.getCollaborators);
 notesRouter.put('/deleteCollaborator', verifyToken.userVerify, notesController.deleteCollaborator);
@@ -35,7 +36,7 @@ notesRouter.put('/editLabel', verifyToken.userVerify, notesController.editLabel)
 notesRouter.delete('/deleteLabel', verifyToken.userVerify, notesController.deleteLabel);
 notesRouter.get('/getArchives', verifyToken.userVerify, notesController.getArchives);
 notesRouter.get('/getTrash', verifyToken.userVerify, notesController.getTrash);
-notesRouter.delete('/deleteNoteForever', verifyToken.userVerify, notesController.deleteNoteForever);
+notesRouter.put('/deleteNoteForever', verifyToken.userVerify, notesController.deleteNoteForever);
 notesRouter.put('/color', verifyToken.userVerify, notesController.color);
 notesRouter.get('/collaboratedNotes', verifyToken.userVerify, notesController.getCollaboratedNotes)
 module.exports = notesRouter;

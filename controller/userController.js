@@ -145,9 +145,11 @@ exports.resetPassword = (req, res) => {
 }
 
 exports.uploadpic = (req, res) => {
+    console.log(req.file);
+    
     let imageURL = req.file.location
     // console.log("new img-->", req.file.location);
-    console.log(req.file);
+    console.log(req.file.location);
     userServices.uploadImage(req, imageURL, (err, result) => {
         let response = {}
         if (err) {

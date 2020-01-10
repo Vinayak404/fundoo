@@ -45,7 +45,6 @@ exports.getNotes = (req) => {
                 else {
                     //if cached data not found, check in database
                     console.log('data not found in cache-->moving to database');
-
                     model.notesModel.find({
                         _userId: req.decoded.payload.id,
                         isDeleted: false,
@@ -125,6 +124,29 @@ exports.editNote = async (req) => {
                         else console.log('deleted the cached notes', data);
                     })
                 }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.unTrash = async (req) => {
+    try {
+        return await new Promise((resolve, reject) => {
+            model.notesModel.findByIdAndUpdate({
+                _id: req.body.id
+            }, {
+                isDeleted: false
+            }, (err, data) => {
+                if (data) {
+                    resolve(data)
+                    elastic.deleteDocument(req)
+                    redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
+                        if (err) console.log('err in deleting cache');
+                        else console.log('deleted the cached notes', data);
+                    })
+                } else reject(err)
             })
         })
     } catch (e) {
@@ -650,7 +672,6 @@ exports.getCollaboratedNotes = async (req) => {
 }
 
 exports.getCollaboratorUsers = (colMails) => {
-
     return new Promise(async (resolve, reject) => {
         try {
             let collabArray = []

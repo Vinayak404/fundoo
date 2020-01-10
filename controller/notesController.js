@@ -87,6 +87,23 @@ exports.editNote = (req, res) => {
         console.log(e);
     }
 }
+exports.unTrash = (req, res) => {
+    try {
+        let response = {};
+        notesServices.unTrash(req)
+            .then((data) => {
+                response.success = true;
+                response.data = data;
+                res.status(200).send(response);
+            }).catch((err) => {
+                response.success = true;
+                response.err = err;
+                res.status(500).send(response);
+            })
+    } catch (e) {
+        console.log(e);
+    }
+}
 
 
 exports.archive = (req, res) => {
