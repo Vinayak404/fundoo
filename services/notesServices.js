@@ -113,7 +113,8 @@ exports.editNote = async (req) => {
                 _id: req.body._id
             }, {
                 title: req.body.title,
-                description: req.body.description
+                description: req.body.description,
+                color: req.body.color
             }, (err, data) => {
                 if (err) reject(err)
                 else {
@@ -318,7 +319,7 @@ exports.getCollaborators = async (req) => {
             collabModel.collaborateModel.findOne({
                 noteId: req.body.noteId
             }, (err, data) => {
-                if (err) reject(err)
+                if (err || !data) reject(err)
                 else {
                     console.log("thiskAYHGtf", req.body.noteId);
                     let allCollabs = this.getCollaboratorUsers(data.collaboratorsId)
