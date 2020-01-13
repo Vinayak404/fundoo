@@ -47,6 +47,10 @@ const notes = new Schema({
     color: {
         type: String,
         default: "white"
+    },
+    collaboratorId: {
+        type: Schema.Types.ObjectId,
+        ref: "collaborateModel"
     }
 
 }, {
