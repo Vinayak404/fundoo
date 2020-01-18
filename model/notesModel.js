@@ -42,7 +42,7 @@ const notes = new Schema({
         ref: "label"
     }],
     reminder: {
-        type: Date,
+        type: String,
     },
     color: {
         type: String,
@@ -51,6 +51,9 @@ const notes = new Schema({
     collaboratorId: {
         type: Schema.Types.ObjectId,
         ref: "collaborateModel"
+    },
+    image: {
+        type: String
     }
 
 }, {

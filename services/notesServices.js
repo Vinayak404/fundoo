@@ -203,16 +203,19 @@ exports.unArchive = async (req) => {
     }
 }
 
-
+let snsReminder = require('../helpers/sns')
 exports.addReminder = async (req) => {
     try {
+        console.log("HHHHHHr", req.body._id, req.body.reminder);
+
         return await new Promise((resolve, reject) => {
-            model.notesModel.findOneAndUpdate({
-                _id: req.body.id
+            model.notesModel.findByIdAndUpdate({
+                _id: req.body._id
             }, {
                 reminder: req.body.reminder
             }, (err, data) => {
                 if (data) {
+                    snsReminder.reminderSchduler(data)
                     resolve(data)
                     elastic.deleteDocument(req)
                     redisCache.deCacheNote(req.decoded.payload.id, (err, data) => {
@@ -725,5 +728,20 @@ exports.getCollaboratorUsers = (colMails) => {
         } catch (err) {
             reject(err)
         }
+    })
+}
+
+exports.notesImageUpload = async (req, imageURL) => {
+    console.log("IMAgeUrel", imageURL);
+
+    return await new Promise((resolve, reject) => {
+        model.notesModel.findByIdAndUpdate({
+            _id: req.body.id
+        }, {
+            image: imageURL
+        }, (err, data) => {
+            if (err || !data) reject(err)
+            else resolve(data)
+        })
     })
 }

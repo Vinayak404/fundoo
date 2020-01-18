@@ -469,3 +469,24 @@ exports.getCollaboratedNotes = (req, res) => {
 
     }
 }
+exports.NotesImageUpload = (req, res) => {
+    console.log('IMAGESErvIcE', req.file);
+
+    let imageURL = req.file.location
+    console.log("new img-->", req.file.location);
+    // console.log(req.file.location);
+    let response = {}
+    notesServices.notesImageUpload(req, imageURL)
+        .then((data) => {
+            response.data = data;
+            response.success = true;
+            response.imageurl = req.file.location
+            res.status(200).send(response);
+        })
+        .catch((err) => {
+            console.log('err');
+            response.err = err;
+            response.success = false;
+            res.status(404).send(response);
+        })
+}

@@ -12,6 +12,7 @@ const verifyToken = require('../helpers/token');
 const elastic = require('../helpers/elasticSearch');
 const express = require('express');
 const sns = require('../helpers/sns')
+const imageMulter = require('../helpers/multer')
 const notesRouter = express.Router();
 notesRouter.post('/addNote', verifyToken.userVerify, notesController.addNote);
 notesRouter.get('/getNotes', verifyToken.userVerify, notesController.getNotes);
@@ -38,5 +39,6 @@ notesRouter.get('/getArchives', verifyToken.userVerify, notesController.getArchi
 notesRouter.get('/getTrash', verifyToken.userVerify, notesController.getTrash);
 notesRouter.put('/deleteNoteForever', verifyToken.userVerify, notesController.deleteNoteForever);
 notesRouter.put('/color', verifyToken.userVerify, notesController.color);
-notesRouter.get('/collaboratedNotes', verifyToken.userVerify, notesController.getCollaboratedNotes)
+notesRouter.get('/collaboratedNotes', verifyToken.userVerify, notesController.getCollaboratedNotes);
+notesRouter.post('/noteImageUpload', verifyToken.userVerify, imageMulter.single('image'), notesController.NotesImageUpload)
 module.exports = notesRouter;
