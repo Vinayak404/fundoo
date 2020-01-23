@@ -1,7 +1,7 @@
 const model = require('../model/userModel')
 const bcrypt = require('bcrypt')
 const emailExistence = require('email-existence')
-
+const logger = require('../helpers/logger')
 exports.register = (req, callback) => {
     try {
         model.user.findOne({
@@ -13,7 +13,6 @@ exports.register = (req, callback) => {
                 emailExistence(req.body.email, (err, data) => {
                     if (!data) callback('email invalid!')
                     else {
-
                         bcrypt.hash(req.body.password, 10, (err, encrypted) => {
                             let user1 = new model.user({
                                 firstName: req.body.firstName,
@@ -23,22 +22,20 @@ exports.register = (req, callback) => {
                             })
                             user1.save((err, data) => {
                                 if (err) {
-                                    console.log('failed to save to db', err);
+                                    logger.ExpressServerLogger.error('failed to save to db', err);
                                     callback(err)
                                 } else {
-                                    console.log('saved in the database', data);
+                                    logger.ExpressServerLogger.info('saved in the database', data);
                                     callback(null, data);
                                 }
                             })
                         })
                     }
                 })
-
             }
         })
-
     } catch (e) {
-        console.log(e);
+        logger.ExpressServerLogger.error(e);
     }
 }
 exports.login = (req, callback) => {

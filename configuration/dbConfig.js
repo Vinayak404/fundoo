@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 require('dotenv').config();
+const logger = require('../helpers/logger')
 
 exports.dbConnection = () => {
     mongoose.connect(process.env.MONGOURL, {
@@ -8,13 +9,13 @@ exports.dbConnection = () => {
     })
 }
 mongoose.connection.on("connected", () => {
-    console.log("Successfully connected to database");
+    logger.logger.info("Successfully connected to database");
 })
 mongoose.connection.on("disconnected", () => {
-    console.log("could not connect to Database");
+    logger.logger.warn("disconnected from Database");
     process.exit();
 })
 mongoose.connection.on("error", () => {
-    console.log("error in connecting to Database");
+    logger.logger.error("error in connecting to Database");
     process.exit(1);
 })
